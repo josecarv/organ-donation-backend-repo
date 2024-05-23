@@ -1,6 +1,9 @@
 
 using Donor.Repositories;
 using Serilog;
+using Donor.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -19,6 +22,14 @@ try
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
+     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+    }
+
+    builder.Services.AddDbContext<DataContext>(options =>
+        options.UseSqlServer(connectionString));
     builder.Services.AddSwaggerGen();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
