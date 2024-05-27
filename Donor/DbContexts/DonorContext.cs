@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using Donor.Models;
 using System.Collections.Generic;
+using Donor.Entities;
 
-namespace Donor.Data
+namespace Donor.DbContexts
 {
-    public class DataContext : DbContext
+    public class DonorContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DonorContext(DbContextOptions<DonorContext> options) : base(options) { }
 
-        public DbSet<Donor.Models.Donor> Donors { get; set; }
+        public DbSet<Entities.Donor> Donors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Donor.Models.Donor>(entity =>
+            modelBuilder.Entity<Entities.Donor>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();

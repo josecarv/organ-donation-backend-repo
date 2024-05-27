@@ -6,7 +6,7 @@ namespace Donor
     {
         public AutoMapperProfile()
         {
-            CreateMap<Donor.Models.DonorDto, Donor.Models.Donor>();
+            CreateMap<Donor.Models.DonorDto, Entities.Donor>();
         }
     }
 }

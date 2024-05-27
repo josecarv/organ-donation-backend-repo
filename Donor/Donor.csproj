@@ -23,8 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DbContexts\" />
-    <Folder Include="Entities\" />
     <Folder Include="Models\" />
     <Folder Include="Utils\" />
     <Folder Include="Profiles\" />

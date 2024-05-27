@@ -1,8 +1,8 @@
 
 using Donor.Repositories;
 using Serilog;
-using Donor.Data;
 using Microsoft.EntityFrameworkCore;
+using Donor.DbContexts;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -28,7 +28,7 @@ try
         throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
     }
 
-    builder.Services.AddDbContext<DataContext>(options =>
+    builder.Services.AddDbContext<DonorContext>(options =>
         options.UseSqlServer(connectionString));
     builder.Services.AddSwaggerGen();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
