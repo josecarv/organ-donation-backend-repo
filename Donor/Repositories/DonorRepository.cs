@@ -23,7 +23,7 @@ namespace Donor.Repositories
             _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public async Task AddDonorAsync(Donor.Entities.Donor donor, List<int> donationPreferences)
+        public async Task AddDonorAsync(Entities.Donor donor, List<int> donationPreferences)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -61,7 +61,7 @@ namespace Donor.Repositories
             }
         }
 
-        public async Task<IEnumerable<Donor.Entities.Donor>> GetAllDonorsAsync()
+        public async Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync()
         {
             IEnumerable<Entities.Donor> donors = new List<Donor.Entities.Donor>();
             try
