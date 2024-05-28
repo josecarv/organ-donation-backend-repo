@@ -1,4 +1,6 @@
 using AutoMapper;
+using Donor.Models;
+
 
 namespace Donor.Profiles
 {
@@ -6,7 +8,13 @@ namespace Donor.Profiles
     {
         public DonorsProfile()
         {
-            CreateMap<Models.DonorDto, Entities.Donor>();
+          CreateMap<DonorDto, Entities.Donor>()
+                .ForMember(dest => dest.DonationPreferences, opt => opt.Ignore());
+
+            CreateMap<Entities.Donor, DonorDto>()
+                .ForMember(dest => dest.DonationPreferences, opt => opt.MapFrom(src => src.DonationPreferences.Select(dp => dp.OrganId)));
+        }
+           
         }
     }
-}
+

@@ -2,6 +2,7 @@
 using Donor.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Donor.Models;
+using Donor.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -44,42 +45,48 @@ namespace Donor.Controllers
 		}
 
 		/// <summary>
-		/// Register a new donor
-		/// </summary>
-		/// <param name="donorDto"></param>
-		/// <returns></returns>
-		[Tags("Donor")]
-		[HttpPost("Register")]
-		public async Task<IActionResult> Register([FromBody] DonorDto donorDto)
-		{
-			
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-			
-			var donor = _mapper.Map<Entities.Donor>(donorDto);
+        /// Register a new donor
+        /// </summary>
+        /// <param name="donorDto"></param>
+        /// <returns></returns>
+        [Tags("Donor")]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] DonorDto donorDto)
+        {
+            if (donorDto == null)
+            {
+                return BadRequest("Donor data is null");
+            }
 
-			await _repo.AddDonorAsync(donor);
-			await _repo.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-			return Ok("Donor registered successfully");	
-			
-		}
+
+            var donor = _mapper.Map<Entities.Donor>(donorDto);
+            var organIds = donorDto.DonationPreferences;
+
+            await _repo.AddDonorAsync(donor, organIds);
+            await _repo.SaveChangesAsync();
+		   
+            return Ok("Donor registered successfully");
+        }
+
+		
 		/// <summary>
 		/// Get all donors
 		/// </summary>
 		/// <returns></returns>
-		[Tags("Donor")]
-		[HttpGet("GetDonors")]
-		public async Task<IActionResult> GetAll()
-		{			
-			var donors = await _repo.GetAllDonorsAsync();
-			return Ok(donors);
-			
-		}
+		 [Tags("Donor")]
+        [HttpGet("GetDonors")]
+        public async Task<IActionResult> GetAll()
+        {
+            var donors = await _repo.GetAllDonorsAsync();
+            var donorDtos = _mapper.Map<IEnumerable<DonorDto>>(donors);
+            return Ok(donorDtos);
+        }
 
-		
 	}
 }
 

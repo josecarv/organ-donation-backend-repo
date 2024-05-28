@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using Donor.Entities;
 
 namespace Donor.Models
 {
     public class DonorDto
     {
+        public int? Id { get; set; }
+
         [Required(ErrorMessage = "Full name is required")]
-        [StringLength(100, ErrorMessage = "Full name can't be longer than 30 characters")]
+        [StringLength(100, ErrorMessage = "Full name can't be longer than 100 characters")]
         public string FullName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Blood type is required")]
@@ -32,6 +37,7 @@ namespace Donor.Models
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
+        [StringLength(100, ErrorMessage = "Email can't be longer than 100 characters")]
         public string Email { get; set; } = string.Empty;
 
         [StringLength(15, ErrorMessage = "Telephone number can't be longer than 15 characters")]
@@ -40,11 +46,12 @@ namespace Donor.Models
         [StringLength(15, ErrorMessage = "Mobile number can't be longer than 15 characters")]
         public string MobileNumber { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Nationality is required")]
-        public string  Nationality { get; set; }  = string.Empty;
+        public string Nationality { get; set; } = string.Empty;
+        public string Gender { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Gender is required")]
-        public string  Gender { get; set; }  = string.Empty;
+        public PreferredContactMode PreferredContact { get; set; }
 
+        public List<int> DonationPreferences { get; set; } = new List<int>();
     }
+
 }

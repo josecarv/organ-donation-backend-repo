@@ -1,3 +1,7 @@
+using Donor.Models;
+using System.Text.Json.Serialization;
+
+
 namespace Donor.Entities
 {
     public class Donor
@@ -15,6 +19,13 @@ namespace Donor.Entities
         public string MobileNumber { get; set; } = string.Empty;
         public string Nationality { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
+        
+        public PreferredContactMode PreferredContact { get; set; }
+        public ICollection<DonationPreference> DonationPreferences { get; set; } = new List<DonationPreference>();
+
 
     }
+     [JsonConverter(typeof(JsonStringEnumConverter))]
+     public enum PreferredContactMode { SMS, EMAIL }
+
 }
