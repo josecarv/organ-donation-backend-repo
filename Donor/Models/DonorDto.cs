@@ -51,7 +51,7 @@ namespace Donor.Models
 
         public PreferredContactMode PreferredContact { get; set; }
 
-        public List<int> DonationPreferences { get; set; } = new List<int>();
+        public List<int> Organs { get; set; } = new List<int>();
     }
 
 }

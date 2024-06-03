@@ -10,7 +10,7 @@ namespace Donor.DbContexts
 
         public DbSet<Entities.Donor> Donors { get; set; }
 
-        public DbSet<DonationPreference> DonationPreferences { get; set; }
+        public DbSet<Organ> Organs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,16 +57,25 @@ namespace Donor.DbContexts
                 );
             });
 
-            modelBuilder.Entity<DonationPreference>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.Donor)
-                      .WithMany(d => d.DonationPreferences)
-                      .HasForeignKey(e => e.DonorId);
-                entity.HasOne(e => e.Organ)
-                      .WithMany()
-                      .HasForeignKey(e => e.OrganId);
-            });
+           modelBuilder.Entity<Entities.Donor>()
+                .HasMany(d => d.Organs)
+                .WithMany(o => o.Donors)
+                .UsingEntity<Dictionary<string, object>>(
+                    "DonorOrgan",
+                    j => j
+                        .HasOne<Organ>()
+                        .WithMany()
+                        .HasForeignKey("OrganId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Entities.Donor>()
+                        .WithMany()
+                        .HasForeignKey("DonorId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey("DonorId", "OrganId");
+                    });
             
         }
     }

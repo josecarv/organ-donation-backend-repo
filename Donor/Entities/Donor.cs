@@ -21,7 +21,7 @@ namespace Donor.Entities
         public string Gender { get; set; } = string.Empty;
         
         public PreferredContactMode PreferredContact { get; set; }
-        public ICollection<DonationPreference> DonationPreferences { get; set; } = new List<DonationPreference>();
+        public ICollection<Organ> Organs { get; set; } = new List<Organ>();
 
 
     }

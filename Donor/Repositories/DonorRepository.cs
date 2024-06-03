@@ -23,27 +23,26 @@ namespace Donor.Repositories
             _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public async Task AddDonorAsync(Entities.Donor donor, List<int> donationPreferences)
+        public async Task AddDonorAsync(Entities.Donor donor, List<int> organIds)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                var existingOrgans = await _context.Organs.Where(o => organIds.Contains(o.Id)).ToListAsync();
+                donor.Organs.Clear();
+
+                foreach (var organ in existingOrgans)
+                {
+                    if (_context.Entry(organ).State == EntityState.Detached)
+                    {
+                        _context.Attach(organ);
+                    }
+                    _context.Entry(organ).State = EntityState.Unchanged;
+                }
+
+                // Add the donor
                 await _context.Donors.AddAsync(donor);
                 await _context.SaveChangesAsync();
-
-                if (donationPreferences != null && donationPreferences.Any())
-                {
-                    foreach (var organId in donationPreferences)
-                    {
-                        var preference = new DonationPreference
-                        {
-                            DonorId = donor.Id,
-                            OrganId = organId
-                        };
-                        await _context.DonationPreferences.AddAsync(preference);
-                    }
-                    await _context.SaveChangesAsync();
-                }
 
                 await transaction.CommitAsync();
             }
@@ -61,14 +60,16 @@ namespace Donor.Repositories
             }
         }
 
+
+
+
         public async Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync()
         {
-            IEnumerable<Entities.Donor> donors = new List<Donor.Entities.Donor>();
+            IEnumerable<Entities.Donor> donors = new List<Entities.Donor>();
             try
             {
                 donors = await _context.Donors
-                    .Include(d => d.DonationPreferences)
-                        .ThenInclude(dp => dp.Organ)
+                    .Include(d => d.Organs)
                     .ToListAsync();
             }
             catch (Exception ex)
