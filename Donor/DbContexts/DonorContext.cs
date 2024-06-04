@@ -19,19 +19,33 @@ namespace Donor.DbContexts
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
-              entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.BloodGroup).IsRequired().HasMaxLength(10);
                 entity.Property(e => e.DateOfBirth).IsRequired();
                 entity.Property(e => e.IdentityNumber).HasMaxLength(50).IsRequired();
-                entity.Property(e => e.ResidentialAddress).HasMaxLength(250);
-                entity.Property(e => e.MailingAddress).HasMaxLength(250);
+
                 entity.Property(e => e.Email).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.TelephoneNumber).HasMaxLength(15);
                 entity.Property(e => e.MobileNumber).HasMaxLength(15);
                 entity.Property(e => e.PreferredContact)
                     .HasConversion<string>()
-                    .HasMaxLength(10); 
+                    .HasMaxLength(10);
+
+                entity.OwnsOne(e => e.ResidentialAddress, addr =>
+               {
+                   addr.Property(a => a.Street).HasMaxLength(100);
+                   addr.Property(a => a.Locality).HasMaxLength(100);
+                   addr.Property(a => a.PostCode).HasMaxLength(20);
+               });
+
+                entity.OwnsOne(e => e.MailingAddress, addr =>
+                {
+                    addr.Property(a => a.Street).HasMaxLength(100);
+                    addr.Property(a => a.Locality).HasMaxLength(100);
+                    addr.Property(a => a.PostCode).HasMaxLength(20);
+                });
+
                 entity.HasIndex(e => e.IdentityNumber).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
             });
@@ -44,7 +58,7 @@ namespace Donor.DbContexts
                 entity.HasData(
                 new Organ { Id = 1, Name = "Kidney" },
                 new Organ { Id = 2, Name = "Liver" },
-                new Organ { Id = 3, Name = "Cartilage" }, 
+                new Organ { Id = 3, Name = "Cartilage" },
                 new Organ { Id = 4, Name = "Bone Tissue" },
                 new Organ { Id = 5, Name = "Small Bowel" },
                 new Organ { Id = 6, Name = "Lungs" },
@@ -57,29 +71,29 @@ namespace Donor.DbContexts
                 );
             });
 
-           modelBuilder.Entity<Entities.Donor>()
-                .HasMany(d => d.Organs)
-                .WithMany(o => o.Donors)
-                .UsingEntity<Dictionary<string, object>>(
-                    "DonorOrgan",
-                    j => j
-                        .HasOne<Organ>()
-                        .WithMany()
-                        .HasForeignKey("OrganId")
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j => j
-                        .HasOne<Entities.Donor>()
-                        .WithMany()
-                        .HasForeignKey("DonorId")
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j =>
-                    {
-                        j.HasKey("DonorId", "OrganId");
-                    });
-            
+            modelBuilder.Entity<Entities.Donor>()
+                 .HasMany(d => d.Organs)
+                 .WithMany(o => o.Donors)
+                 .UsingEntity<Dictionary<string, object>>(
+                     "DonorOrgan",
+                     j => j
+                         .HasOne<Organ>()
+                         .WithMany()
+                         .HasForeignKey("OrganId")
+                         .OnDelete(DeleteBehavior.Cascade),
+                     j => j
+                         .HasOne<Entities.Donor>()
+                         .WithMany()
+                         .HasForeignKey("DonorId")
+                         .OnDelete(DeleteBehavior.Cascade),
+                     j =>
+                     {
+                         j.HasKey("DonorId", "OrganId");
+                     });
+
         }
     }
 }
-     
 
-    
+
+

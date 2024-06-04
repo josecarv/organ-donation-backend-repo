@@ -30,7 +30,10 @@ namespace Donor.Repositories
 
             {
                 await _context.Donors.AddAsync(donor);
+                _log.LogInformation("test");
                 await _context.SaveChangesAsync();
+               await transaction.CommitAsync();
+
             }
 
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
