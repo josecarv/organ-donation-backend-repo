@@ -8,22 +8,22 @@ namespace Donor.Models
 {
     public class DonorDto
     {
-        public int? Id { get; set; }
+    
+      
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(100, ErrorMessage = "First name can't be longer than 100 characters")]
+        public string FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Full name is required")]
-        [StringLength(100, ErrorMessage = "Full name can't be longer than 100 characters")]
-        public string FullName { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(100, ErrorMessage = "Last name can't be longer than 100 characters")]
+        public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Blood type is required")]
         [StringLength(3, ErrorMessage = "Blood type can't be longer than 3 characters")]
-        public string BloodType { get; set; } = string.Empty;
+        public string BloodGroup{ get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Date of birth is required")]
         public DateTime DateOfBirth { get; set; }
-
-        [Required(ErrorMessage = "Contact number is required")]
-        [StringLength(15, ErrorMessage = "Contact number can't be longer than 15 characters")]
-        public string ContactNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Identity number is required")]
         [StringLength(50, ErrorMessage = "Identity number can't be longer than 50 characters")]
@@ -43,6 +43,8 @@ namespace Donor.Models
         [StringLength(15, ErrorMessage = "Telephone number can't be longer than 15 characters")]
         public string TelephoneNumber { get; set; } = string.Empty;
 
+
+        [Required(ErrorMessage = "Telephone number is required")]
         [StringLength(15, ErrorMessage = "Mobile number can't be longer than 15 characters")]
         public string MobileNumber { get; set; } = string.Empty;
 

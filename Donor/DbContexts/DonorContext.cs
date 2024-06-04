@@ -19,10 +19,10 @@ namespace Donor.DbContexts
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
-                entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.BloodType).IsRequired().HasMaxLength(10);
+              entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.BloodGroup).IsRequired().HasMaxLength(10);
                 entity.Property(e => e.DateOfBirth).IsRequired();
-                entity.Property(e => e.ContactNumber).HasMaxLength(15);
                 entity.Property(e => e.IdentityNumber).HasMaxLength(50).IsRequired();
                 entity.Property(e => e.ResidentialAddress).HasMaxLength(250);
                 entity.Property(e => e.MailingAddress).HasMaxLength(250);
