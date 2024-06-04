@@ -23,29 +23,16 @@ namespace Donor.Repositories
             _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public async Task AddDonorAsync(Entities.Donor donor, List<int> organIds)
+        public async Task AddDonorAsync(Entities.Donor donor)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
+
             {
-                var existingOrgans = await _context.Organs.Where(o => organIds.Contains(o.Id)).ToListAsync();
-                donor.Organs.Clear();
-
-                foreach (var organ in existingOrgans)
-                {
-                    if (_context.Entry(organ).State == EntityState.Detached)
-                    {
-                        _context.Attach(organ);
-                    }
-                    _context.Entry(organ).State = EntityState.Unchanged;
-                }
-
-                // Add the donor
                 await _context.Donors.AddAsync(donor);
                 await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
             }
+
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
                 _log.LogError(ex, "Database update error while adding donor");
@@ -59,8 +46,18 @@ namespace Donor.Repositories
                 throw;
             }
         }
-
-
+        public async Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds)
+        {
+            foreach (var organId in organIds)
+            {
+                var organ = await _context.Organs.FindAsync(organId);
+                if (organ != null)
+                {
+                    donor.Organs.Add(organ);
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
 
 
         public async Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync()
@@ -79,6 +76,13 @@ namespace Donor.Repositories
             }
             return donors;
         }
+
+
+        public async Task<Entities.Donor> GetDonorByIdAsync(int id)
+        {
+            return await _context.Donors.FindAsync(id);
+        }
+
 
 
         public async Task<bool> SaveChangesAsync()

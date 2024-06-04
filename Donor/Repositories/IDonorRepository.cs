@@ -6,11 +6,18 @@ namespace Donor.Repositories
 {
     public interface IDonorRepository
     {
-        Task AddDonorAsync(Entities.Donor donor,List<int> Organs);
+        Task AddDonorAsync(Entities.Donor donor);
         Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync();
-		Task<bool> SaveChangesAsync();
 
-	}
+        Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds);
+
+
+        Task<Entities.Donor> GetDonorByIdAsync(int id);
+
+
+        Task<bool> SaveChangesAsync();
+
+    }
 }
 
 

@@ -61,11 +61,24 @@ namespace Donor.Controllers
 
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
-            var organIds = donorDto.Organs;
-            await _repo.AddDonorAsync(donor, organIds);
-            await _repo.SaveChangesAsync();
+            await _repo.AddDonorAsync(donor);
 
             return Ok("Donor registered successfully");
+        }
+
+
+        [HttpPost("AddOrgans/{donorId}")]
+        public async Task<IActionResult> AddOrgans(int donorId, [FromBody] List<int> organIds)
+        {
+            var donor = await _repo.GetDonorByIdAsync(donorId);
+            if (donor == null)
+            {
+                return NotFound("Donor not found");
+            }
+
+            await _repo.AddOrgansToDonorAsync(donor, organIds);
+
+            return Ok("Organs added successfully");
         }
 
 
