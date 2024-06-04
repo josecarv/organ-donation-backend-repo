@@ -36,6 +36,8 @@ try
 
     // Add services to the container.
     builder.Services.AddScoped<IDonorRepository, DonorRepository>();
+    builder.Services.AddScoped<ILocalityRepository, LocalityRepository>();
+
 
     builder.Services.AddCors(options =>
     {
