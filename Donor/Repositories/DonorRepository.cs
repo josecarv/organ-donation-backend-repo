@@ -32,7 +32,7 @@ namespace Donor.Repositories
                 await _context.Donors.AddAsync(donor);
                 _log.LogInformation("test");
                 await _context.SaveChangesAsync();
-               await transaction.CommitAsync();
+                await transaction.CommitAsync();
 
             }
 
@@ -83,7 +83,86 @@ namespace Donor.Repositories
 
         public async Task<Entities.Donor> GetDonorByIdAsync(int id)
         {
-            return await _context.Donors.FindAsync(id);
+            return await _context.Donors
+                .Include(d => d.Organs)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+
+
+
+        public async Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var existingDonor = await _context.Donors
+                    .Include(d => d.Organs)
+                    .FirstOrDefaultAsync(d => d.Id == donorId);
+
+                if (existingDonor == null)
+                {
+                    throw new ArgumentException("Donor not found with the provided ID");
+                }
+
+                existingDonor.FirstName = donorUpdate.FirstName;
+                existingDonor.LastName = donorUpdate.LastName;
+                existingDonor.BloodGroup = donorUpdate.BloodGroup;
+                existingDonor.DateOfBirth = donorUpdate.DateOfBirth;
+                existingDonor.IdentityNumber = donorUpdate.IdentityNumber;
+                existingDonor.ResidentialAddress = donorUpdate.ResidentialAddress;
+                existingDonor.MailingAddress = donorUpdate.MailingAddress;
+                existingDonor.Email = donorUpdate.Email;
+                existingDonor.TelephoneNumber = donorUpdate.TelephoneNumber;
+                existingDonor.MobileNumber = donorUpdate.MobileNumber;
+                existingDonor.Nationality = donorUpdate.Nationality;
+                existingDonor.Gender = donorUpdate.Gender;
+                existingDonor.PreferredContact = donorUpdate.PreferredContact;
+
+                var existingOrganIds = existingDonor.Organs.Select(o => o.Id).ToList();
+                var organsToAdd = donorUpdate.Organs.Where(id => !existingOrganIds.Contains(id.Id)).ToList();
+                var organsToRemove = existingOrganIds.Except(donorUpdate.Organs.Select(o => o.Id)).ToList();
+
+                foreach (var organId in organsToAdd)
+                {
+                    var organ = await _context.Organs.FindAsync(organId.Id);
+                    if (organ != null)
+                    {
+                        existingDonor.Organs.Add(organ);
+                    }
+                }
+
+                foreach (var organId in organsToRemove)
+                {
+                    var organToRemove = existingDonor.Organs.FirstOrDefault(o => o.Id == organId);
+                    if (organToRemove != null)
+                    {
+                        existingDonor.Organs.Remove(organToRemove);
+                    }
+                }
+
+                _context.Donors.Update(existingDonor);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (ArgumentException ex)
+            {
+                _log.LogError(ex, "Error updating donor: Donor not found");
+                throw;
+            }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            {
+                _log.LogError(ex, "Database update error while updating donor");
+                await transaction.RollbackAsync();
+                throw new ValidationException("A donor with the same Identity Number or Email already exists.");
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error updating donor");
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
 

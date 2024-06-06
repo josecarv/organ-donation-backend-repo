@@ -58,7 +58,7 @@ namespace Donor.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
             await _repo.AddDonorAsync(donor);
@@ -94,6 +94,47 @@ namespace Donor.Controllers
             var donorDtos = _mapper.Map<IEnumerable<DonorDto>>(donors);
             return Ok(donorDtos);
         }
+
+
+        /// <summary>
+        /// Update Edit
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] DonorDto donorDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != donorDto.Id)
+            {
+                return BadRequest("Donor ID mismatch");
+            }
+
+            var donor = _mapper.Map<Entities.Donor>(donorDto);
+
+            await _repo.UpdateDonorAsync(id, donor);
+
+            return Ok("Donor updated successfully");
+        }
+
+        [HttpGet("GetDonor/{id}")]
+        public async Task<IActionResult> GetDonorById(int id)
+        {
+            var donor = await _repo.GetDonorByIdAsync(id);
+            if (donor == null)
+            {
+                return NotFound("Donor not found");
+            }
+
+            var donorDto = _mapper.Map<DonorDto>(donor);
+            return Ok(donorDto);
+        }
+
+
+
 
     }
 }

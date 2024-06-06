@@ -15,6 +15,9 @@ namespace Donor.Repositories
         Task<Entities.Donor> GetDonorByIdAsync(int id);
 
 
+        Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate);
+
+
         Task<bool> SaveChangesAsync();
 
     }
