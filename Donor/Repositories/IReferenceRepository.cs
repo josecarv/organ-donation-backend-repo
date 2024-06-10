@@ -4,8 +4,14 @@ using Donor.Entities;
 
 namespace Donor.Repositories
 {
-    public interface ILocalityRepository
+    public interface IReferenceRepository
     {
         Task<IEnumerable<Locality>> GetAllLocalitiesAsync();
+
+
+         Task<IEnumerable<Nationality>> GetAllNationalitiesAsync();
+
+
+        
     }
 }
