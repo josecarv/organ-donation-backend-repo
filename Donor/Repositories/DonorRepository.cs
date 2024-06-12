@@ -114,6 +114,8 @@ namespace Donor.Repositories
                 existingDonor.TelephoneNumber = donorUpdate.TelephoneNumber;
                 existingDonor.MobileNumber = donorUpdate.MobileNumber;
                 existingDonor.Gender = donorUpdate.Gender;
+                existingDonor.PreferredContact = donorUpdate.PreferredContact;
+
 
                 var updatedOrgans = await _context.Organs
                     .Where(o => donorUpdate.Organs.Select(uo => uo.Id).Contains(o.Id))
