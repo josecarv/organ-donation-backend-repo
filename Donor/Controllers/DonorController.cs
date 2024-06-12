@@ -108,9 +108,11 @@ namespace Donor.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != donorDto.Id)
+            var existingDonor = await _repo.GetDonorByIdAsync(id);
+
+            if (existingDonor == null)
             {
-                return BadRequest("Donor ID mismatch");
+                return NotFound("Donor with ID not found");
             }
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
@@ -119,6 +121,8 @@ namespace Donor.Controllers
 
             return Ok("Donor updated successfully");
         }
+
+
 
         [HttpGet("GetDonor/{id}")]
         public async Task<IActionResult> GetDonorById(int id)

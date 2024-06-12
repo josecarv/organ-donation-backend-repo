@@ -178,14 +178,12 @@ namespace Donor.DbContexts
                             new Nationality { Id = 2, Name = "Albanian" },
                             new Nationality { Id = 3, Name = "Algerian" },
                             new Nationality { Id = 4, Name = "American" },
-                            // Add more as needed
                             new Nationality { Id = 5, Name = "Andorran" },
                             new Nationality { Id = 6, Name = "Angolan" },
                             new Nationality { Id = 7, Name = "Antiguans" },
                             new Nationality { Id = 8, Name = "Argentinean" },
                             new Nationality { Id = 9, Name = "Armenian" },
                             new Nationality { Id = 10, Name = "Australian" },
-                            // Add more here
                             new Nationality { Id = 11, Name = "Austrian" },
                             new Nationality { Id = 12, Name = "Azerbaijani" },
                             new Nationality { Id = 13, Name = "Bahamian" },
