@@ -7,7 +7,7 @@ using Donor.Entities;
 namespace Donor.Controllers
 {
     [ApiController]
-    [Route("api/")]
+    [Route("api/donor")]
     public class ReferenceDataController : ControllerBase
     {
         private readonly IReferenceRepository _repo;
