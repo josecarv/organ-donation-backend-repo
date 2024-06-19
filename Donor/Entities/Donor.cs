@@ -21,31 +21,18 @@ namespace Donor.Entities
         public string Gender { get; set; } = string.Empty;
 
         public PreferredContactMode PreferredContact { get; set; }
+
+        public DonorStatus DonorStatus { get; set; }
+        public string OnHoldReason { get; set; }
+
+       // public string ModifiedBy { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public ICollection<Organ> Organs { get; set; } = new List<Organ>();
 
 
     }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum PreferredContactMode { SMS, EMAIL }
-
-    public enum Gender
-    {
-        Male,
-        Female,
-        Other
-    }
-
-    public enum BloodGroup
-    {
-        A_Positive,
-        A_Negative,
-        B_Positive,
-        B_Negative,
-        AB_Positive,
-        AB_Negative,
-        O_Positive,
-        O_Negative
-    }
-
+  
 
 }

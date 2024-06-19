@@ -66,6 +66,12 @@ namespace Donor.Controllers
             return Ok("Donor registered successfully");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="donorId"></param>
+        /// <param name="organIds"></param>
+        /// <returns></returns>
 
         [HttpPost("AddOrgans/{donorId}")]
         public async Task<IActionResult> AddOrgans(int donorId, [FromBody] List<int> organIds)
@@ -95,6 +101,19 @@ namespace Donor.Controllers
             return Ok(donorDtos);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [Tags("Donor")]
+        [HttpGet("GetOrgans")]
+        public async Task<IActionResult> GetAllOrgans()
+        {
+            var organs = await _repo.GetAllOrgansAsync();
+            var organDtos = _mapper.Map<IEnumerable<OrganDto>>(organs);
+            return Ok(organDtos);
+        }
+
 
         /// <summary>
         /// Update Edit
@@ -108,21 +127,25 @@ namespace Donor.Controllers
                 return BadRequest(ModelState);
             }
 
-            var existingDonor = await _repo.GetDonorByIdAsync(id);
-
-            if (existingDonor == null)
+            if (!await _repo.DonorExistsAsync(id))
             {
-                return NotFound("Donor with ID not found");
+                return NotFound("Donor not found");
             }
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
 
             await _repo.UpdateDonorAsync(id, donor);
+            await _repo.SaveChangesAsync();
+
 
             return Ok("Donor updated successfully");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpGet("GetDonor/{id}")]
         public async Task<IActionResult> GetDonorById(int id)
@@ -137,10 +160,30 @@ namespace Donor.Controllers
             return Ok(donorDto);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
 
+       /** [HttpGet("SearchDonors")]
+        public async Task<IActionResult> SearchDonors([FromQuery] string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return BadRequest("Search term cannot be empty");
+            }
+
+            var donors = await _repo.SearchDonorsAsync(searchTerm);
+            var donorDtos = _mapper.Map<IEnumerable<DonorDto>>(donors);
+
+            return Ok(donorDtos);
+        }**/
 
 
     }
-}
 
+
+
+}
 

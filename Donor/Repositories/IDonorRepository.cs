@@ -9,6 +9,10 @@ namespace Donor.Repositories
         Task AddDonorAsync(Entities.Donor donor);
         Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync();
 
+
+        Task<IEnumerable<Entities.Organ>> GetAllOrgansAsync();
+
+
         Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds);
 
 
@@ -16,6 +20,13 @@ namespace Donor.Repositories
 
 
         Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate);
+
+
+       // Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm);
+
+
+
+        Task<bool> DonorExistsAsync(int donorId);
 
 
         Task<bool> SaveChangesAsync();

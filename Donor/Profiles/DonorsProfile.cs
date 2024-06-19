@@ -2,6 +2,9 @@ using AutoMapper;
 using Donor.Models;
 using Donor.Entities;
 using System.Linq;
+using Donor.DbContexts;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Donor.Profiles
 {
@@ -9,19 +12,17 @@ namespace Donor.Profiles
     {
         public DonorsProfile()
         {
-            CreateMap<DonorDto,Entities.Donor>()
-                .ForMember(dest => dest.Organs, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.Organs.Clear();
-                    if (src.Organs != null)
-                    {
-                        dest.Organs = src.Organs.Select(id => new Organ { Id = id }).ToList();
-                    }
-                });
+            CreateMap<DonorDto, Entities.Donor>();
+         // .ForMember(dest => dest.Organs, opt => opt.Ignore());
+            // .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.ModifiedBy));
 
-            CreateMap<Entities.Donor, DonorDto>()
-                .ForMember(dest => dest.Organs, opt => opt.MapFrom(src => src.Organs.Select(o => o.Id)));
+            CreateMap<Entities.Donor, DonorDto>();
+                        //.ForMember(dest => dest.Organs, opt => opt.MapFrom(src => src.Organs.Select(o => o.Id)));
+
+
+
+            CreateMap<Organ, OrganDto>();
+            CreateMap<OrganDto, Organ>();
         }
     }
 }
