@@ -39,6 +39,20 @@ namespace Donor.DbContexts
                     .HasConversion<string>()
                     .HasMaxLength(10);
 
+                entity.Property(e => e.DonorStatus)
+                 .HasConversion<string>()
+                 .IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                entity.Property(e => e.OnHoldReason).HasMaxLength(100);
+              //  entity.Property(e => e.ModifiedBy).HasMaxLength(100);
+
+
+
+
+
+
                 entity.OwnsOne(e => e.ResidentialAddress, addr =>
                {
                    addr.Property(a => a.Street).HasMaxLength(100);
@@ -78,7 +92,7 @@ namespace Donor.DbContexts
                 );
             });
 
-            modelBuilder.Entity<Entities.Donor>()
+         /**   modelBuilder.Entity<Entities.Donor>()
                  .HasMany(d => d.Organs)
                  .WithMany(o => o.Donors)
                  .UsingEntity<Dictionary<string, object>>(
@@ -96,7 +110,7 @@ namespace Donor.DbContexts
                      j =>
                      {
                          j.HasKey("DonorId", "OrganId");
-                     });
+                     }); **/
 
 
 

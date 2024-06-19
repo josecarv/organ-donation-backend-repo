@@ -20,7 +20,7 @@ namespace Donor.Models
 
 
         [Required(ErrorMessage = "Blood group is required")]
-        [StringLength(3, ErrorMessage = "Blood type can't be longer than 3 characters")]
+        [StringLength(10, ErrorMessage = "Blood type can't be longer than 10 characters")]
         public string BloodGroup { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Date of birth is required")]
@@ -50,7 +50,21 @@ namespace Donor.Models
 
         public PreferredContactMode PreferredContact { get; set; }
 
+        public DonorStatus DonorStatus { get; set; }
+
+        public string OnHoldReason { get; set; } = string.Empty;
+
+       /// <summary>
+       /// public string ModifiedBy { get; set; }
+       /// </summary>
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
         public List<int> Organs { get; set; } = new List<int>();
+
+
+        
     }
 
 }
