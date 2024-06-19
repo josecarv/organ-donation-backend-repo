@@ -131,7 +131,7 @@ namespace Donor.Repositories
         {
             try
             {
-                var existingDonor = await _context.Donors
+                var entity = await _context.Donors
                  //  .Include(d => d.Organs)
                    .FirstOrDefaultAsync(d => d.Id == donorId);
 
@@ -146,9 +146,9 @@ namespace Donor.Repositories
                    existingDonor.Organs = updatedOrgans;
                    existingDonor.UpdatedAt = DateTime.UtcNow; **/
 
-                _mapper.Map(donorUpdate, existingDonor);
+                _mapper.Map(donorUpdate, entity);
 
-                _context.Donors.Update(existingDonor);
+                _context.Donors.Update(entity);
 
 
             }

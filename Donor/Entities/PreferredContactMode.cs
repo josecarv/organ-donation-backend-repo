@@ -6,7 +6,7 @@ namespace Donor.Entities
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PreferredContactMode
     {
-        SMS,
-        EMAIL
+        SMS = 0 ,
+        EMAIL = 1
     }
 }

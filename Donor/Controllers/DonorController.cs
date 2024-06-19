@@ -134,7 +134,7 @@ namespace Donor.Controllers
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
 
-            await _repo.UpdateDonorAsync(id, donor);
+           // await _repo.UpdateDonorAsync(id, donor);
             await _repo.SaveChangesAsync();
 
 

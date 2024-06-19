@@ -20,7 +20,7 @@ namespace Donor.Entities
         public string Nationality { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
 
-        public PreferredContactMode PreferredContact { get; set; }
+        public int PreferredContact { get; set; }
 
         public DonorStatus DonorStatus { get; set; }
         public string OnHoldReason { get; set; }
