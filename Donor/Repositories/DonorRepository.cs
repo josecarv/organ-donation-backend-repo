@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Drawing;
+using Donor.Models;
+using AutoMapper;
 
 namespace Donor.Repositories
 {
@@ -16,11 +19,15 @@ namespace Donor.Repositories
     {
         private readonly DonorContext _context;
         private readonly ILogger<DonorRepository> _log;
+        private readonly IMapper _mapper;
 
-        public DonorRepository(DonorContext context, ILogger<DonorRepository> log)
+
+        public DonorRepository(DonorContext context, IMapper mapper, ILogger<DonorRepository> log)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _log = log ?? throw new ArgumentNullException(nameof(log));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+
         }
 
         public async Task AddDonorAsync(Entities.Donor donor)
@@ -29,6 +36,10 @@ namespace Donor.Repositories
             try
 
             {
+                donor.CreatedAt = DateTime.UtcNow;
+                donor.UpdatedAt = DateTime.UtcNow;
+
+
                 await _context.Donors.AddAsync(donor);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -50,17 +61,20 @@ namespace Donor.Repositories
         }
         public async Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds)
         {
-            foreach (var organId in organIds)
+            await _context.Entry(donor).Collection(d => d.Organs).LoadAsync();
+
+            var existingOrgans = await _context.Organs
+                .Where(o => organIds.Contains(o.Id))
+                .ToListAsync();
+
+            donor.Organs.Clear();
+            foreach (var organ in existingOrgans)
             {
-                var organ = await _context.Organs.FindAsync(organId);
-                if (organ != null)
-                {
-                    donor.Organs.Add(organ);
-                }
+                donor.Organs.Add(organ);
             }
+
             await _context.SaveChangesAsync();
         }
-
 
         public async Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync()
         {
@@ -80,6 +94,29 @@ namespace Donor.Repositories
         }
 
 
+
+
+
+        public async Task<IEnumerable<Entities.Organ>> GetAllOrgansAsync()
+        {
+            IEnumerable<Entities.Organ> organs = new List<Entities.Organ>();
+            try
+            {
+                organs = await _context.Organs
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error getting all donors");
+                throw;
+            }
+            return organs;
+        }
+
+
+
+
+
         public async Task<Entities.Donor> GetDonorByIdAsync(int id)
         {
             return await _context.Donors
@@ -92,54 +129,51 @@ namespace Donor.Repositories
 
         public async Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Retrieve the existing donor from the database, including their organs
                 var existingDonor = await _context.Donors
-                    .Include(d => d.Organs)
-                    .FirstOrDefaultAsync(d => d.Id == donorId);
+                 //  .Include(d => d.Organs)
+                   .FirstOrDefaultAsync(d => d.Id == donorId);
 
-                if (existingDonor == null)
-                {
-                    throw new ArgumentException("Donor not found with the provided ID");
-                }
+                /**   _context.Entry(existingDonor).CurrentValues.SetValues(donorUpdate);
 
-                existingDonor.FirstName = donorUpdate.FirstName;
-                existingDonor.LastName = donorUpdate.LastName;
-                existingDonor.BloodGroup = donorUpdate.BloodGroup;
-                existingDonor.ResidentialAddress = donorUpdate.ResidentialAddress;
-                existingDonor.MailingAddress = donorUpdate.MailingAddress;
-                existingDonor.Email = donorUpdate.Email;
-                existingDonor.TelephoneNumber = donorUpdate.TelephoneNumber;
-                existingDonor.MobileNumber = donorUpdate.MobileNumber;
-                existingDonor.Gender = donorUpdate.Gender;
-                existingDonor.PreferredContact = donorUpdate.PreferredContact;
+                   var updatedOrgans = await _context.Organs
+                       .Where(o => donorUpdate.Organs.Select(uo => uo.Id).Contains(o.Id))
+                       .ToListAsync();
+
+                   existingDonor.ResidentialAddress = donorUpdate.ResidentialAddress;
+                   existingDonor.MailingAddress = donorUpdate.MailingAddress;
+                   existingDonor.Organs = updatedOrgans;
+                   existingDonor.UpdatedAt = DateTime.UtcNow; **/
+
+                _mapper.Map(donorUpdate, existingDonor);
+
+                _context.Donors.Update(existingDonor);
 
 
-                var updatedOrgans = await _context.Organs
-                    .Where(o => donorUpdate.Organs.Select(uo => uo.Id).Contains(o.Id))
-                    .ToListAsync();
-
-                existingDonor.Organs = updatedOrgans;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
             }
-            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex)) 
             {
                 _log.LogError(ex, "Database update error while updating donor");
-                await transaction.RollbackAsync();
                 throw new ValidationException("A donor with the same Identity Number or Email already exists.");
             }
             catch (Exception ex)
             {
                 _log.LogError(ex, "Error updating donor");
-                await transaction.RollbackAsync();
                 throw;
             }
         }
 
+
+
+   /**     public async Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm)
+        {
+            return await _context.Donors
+                .Where(d => d.FirstName.Contains(searchTerm) || d.LastName.Contains(searchTerm) || d.Nationality.Contains(searchTerm) ||
+                         d.Gender.Contains(searchTerm)   || d.IdentityNumber.Contains(searchTerm))
+                .Include(d => d.Organs)
+                .ToListAsync();
+        }**/
 
         public async Task<bool> SaveChangesAsync()
         {
@@ -154,7 +188,16 @@ namespace Donor.Repositories
             }
         }
 
-        private bool IsUniqueConstraintViolation(DbUpdateException ex)
+
+        public async Task<bool> DonorExistsAsync(int donorId)
+        {
+            return await _context.Donors.AnyAsync(d => d.Id == donorId);
+        }
+
+
+       
+
+            private bool IsUniqueConstraintViolation(DbUpdateException ex)
         {
             if (ex.InnerException is SqlException sqlEx)
             {
