@@ -19,10 +19,10 @@ namespace Donor.Repositories
         Task<Entities.Donor> GetDonorByIdAsync(int id);
 
 
-        Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate);
+        Task UpdateDonorAsync(int donorId, DonorDto DonorDto);
 
 
-       // Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm);
+        Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm);
 
 
 

@@ -22,7 +22,7 @@ namespace Donor.Entities
 
         public int PreferredContact { get; set; }
 
-        public DonorStatus DonorStatus { get; set; }
+        public int DonorStatus { get; set; }
         public string OnHoldReason { get; set; }
 
        // public string ModifiedBy { get; set; }

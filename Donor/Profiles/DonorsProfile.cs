@@ -4,6 +4,7 @@ using Donor.Entities;
 using System.Linq;
 using Donor.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 
 namespace Donor.Profiles
@@ -12,15 +13,14 @@ namespace Donor.Profiles
     {
         public DonorsProfile()
         {
+
             CreateMap<DonorDto, Entities.Donor>()
-				.ForMember(dest => dest.MailingAddress, opt => opt.MapFrom(src => src.MailingAddress))
-				.ForMember(dest => dest.ResidentialAddress, opt => opt.MapFrom(src => src.ResidentialAddress))
-				.ForMember(dest => dest.PreferredContact, opt => opt.MapFrom(src => (int)src.PreferredContact))
-				.ForMember(dest => dest.Organs, opt => opt.MapFrom(src => src.Organs));
+             .ForMember(dest => dest.Organs, opt => opt.Ignore());
+        
 
 
-			CreateMap<Entities.Donor, DonorDto>();
-                        //.ForMember(dest => dest.Organs, opt => opt.MapFrom(src => src.Organs.Select(o => o.Id)));
+                 CreateMap<Entities.Donor, DonorDto>()
+             .ForMember(dest => dest.Organs, opt => opt.MapFrom(src => src.Organs.Select(o => o.Id)));
 
 
 

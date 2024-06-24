@@ -22,6 +22,7 @@ namespace Donor.Repositories
         private readonly IMapper _mapper;
 
 
+
         public DonorRepository(DonorContext context, IMapper mapper, ILogger<DonorRepository> log)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -127,32 +128,30 @@ namespace Donor.Repositories
 
 
 
-        public async Task UpdateDonorAsync(int donorId, Entities.Donor donorUpdate)
+        public async Task UpdateDonorAsync(int donorId, DonorDto donorDto)
         {
+
+            _log.LogInformation("Using IMapper implementation: {MapperType}", _mapper.GetType().FullName);
+
             try
             {
                 var entity = await _context.Donors
-                 //  .Include(d => d.Organs)
+                   .Include(d => d.Organs)
                    .FirstOrDefaultAsync(d => d.Id == donorId);
 
-                /**   _context.Entry(existingDonor).CurrentValues.SetValues(donorUpdate);
 
-                   var updatedOrgans = await _context.Organs
-                       .Where(o => donorUpdate.Organs.Select(uo => uo.Id).Contains(o.Id))
-                       .ToListAsync();
+                if (entity == null)
+                {
+                    throw new KeyNotFoundException("Donor not found");
+                }
 
-                   existingDonor.ResidentialAddress = donorUpdate.ResidentialAddress;
-                   existingDonor.MailingAddress = donorUpdate.MailingAddress;
-                   existingDonor.Organs = updatedOrgans;
-                   existingDonor.UpdatedAt = DateTime.UtcNow; **/
-
-                _mapper.Map(donorUpdate, entity);
+                _mapper.Map(donorDto, entity);
 
                 _context.Donors.Update(entity);
 
 
             }
-            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex)) 
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
                 _log.LogError(ex, "Database update error while updating donor");
                 throw new ValidationException("A donor with the same Identity Number or Email already exists.");
@@ -162,18 +161,21 @@ namespace Donor.Repositories
                 _log.LogError(ex, "Error updating donor");
                 throw;
             }
+
         }
 
 
 
-   /**     public async Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm)
+        public async Task<IEnumerable<Entities.Donor>> SearchDonorsAsync(string searchTerm)
         {
             return await _context.Donors
                 .Where(d => d.FirstName.Contains(searchTerm) || d.LastName.Contains(searchTerm) || d.Nationality.Contains(searchTerm) ||
-                         d.Gender.Contains(searchTerm)   || d.IdentityNumber.Contains(searchTerm))
+                         d.Gender.Contains(searchTerm) || d.IdentityNumber.Contains(searchTerm))
                 .Include(d => d.Organs)
                 .ToListAsync();
-        }**/
+        }
+
+
 
         public async Task<bool> SaveChangesAsync()
         {
@@ -195,9 +197,9 @@ namespace Donor.Repositories
         }
 
 
-       
 
-            private bool IsUniqueConstraintViolation(DbUpdateException ex)
+
+        private bool IsUniqueConstraintViolation(DbUpdateException ex)
         {
             if (ex.InnerException is SqlException sqlEx)
             {

@@ -127,19 +127,21 @@ namespace Donor.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!await _repo.DonorExistsAsync(id))
+            var existingDonor = await _repo.GetDonorByIdAsync(id);
+            if (existingDonor == null)
             {
                 return NotFound("Donor not found");
             }
 
-            var donor = _mapper.Map<Entities.Donor>(donorDto);
+            await _repo.UpdateDonorAsync(id, donorDto);
 
-           // await _repo.UpdateDonorAsync(id, donor);
             await _repo.SaveChangesAsync();
 
+         
 
             return Ok("Donor updated successfully");
         }
+    
 
         /// <summary>
         /// 
@@ -166,7 +168,7 @@ namespace Donor.Controllers
         /// <param name="searchTerm"></param>
         /// <returns></returns>
 
-       /** [HttpGet("SearchDonors")]
+        [HttpGet("SearchDonors")]
         public async Task<IActionResult> SearchDonors([FromQuery] string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
@@ -178,12 +180,47 @@ namespace Donor.Controllers
             var donorDtos = _mapper.Map<IEnumerable<DonorDto>>(donors);
 
             return Ok(donorDtos);
-        }**/
+        }
 
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="statusDto"></param>
+        /// <returns></returns>
+        [HttpPut("status/{id}")]
+        public async Task<IActionResult> UpdateDonorStatus(int id, [FromBody] DonorStatusDto statusDto)
+        {
+            if (statusDto == null)
+            {
+                return BadRequest("Invalid status data");
+            }
+
+            var donor = await _repo.GetDonorByIdAsync(id);
+            if (donor == null)
+            {
+                return NotFound("Donor not found");
+            }
+
+            donor.DonorStatus = (int)statusDto.Status;
+            if (statusDto.Status == DonorStatus.OnHold)
+            {
+                donor.OnHoldReason = statusDto.OnHoldReason;
+            }
+            else
+            {
+                donor.OnHoldReason = "Not Applicable";
+            }
+
+            await _repo.SaveChangesAsync();
+            return Ok("Donor status updated successfully");
+        }
     }
 
 
-
 }
+
+
 
