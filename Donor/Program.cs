@@ -29,7 +29,7 @@ try
     }
 
     builder.Services.AddDbContext<DonorContext>(options =>
-        options.UseSqlite(connectionString)); 
+     options.UseSqlServer(connectionString));
     builder.Services.AddSwaggerGen();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
