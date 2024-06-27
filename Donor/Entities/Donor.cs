@@ -20,12 +20,19 @@ namespace Donor.Entities
         public string Nationality { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
 
-        public PreferredContactMode PreferredContact { get; set; }
+        public int PreferredContact { get; set; }
+
+        public int DonorStatus { get; set; }
+        public string OnHoldReason { get; set; }
+
+       // public string ModifiedBy { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public ICollection<Organ> Organs { get; set; } = new List<Organ>();
 
 
     }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum PreferredContactMode { SMS, EMAIL }
+  
 
 }

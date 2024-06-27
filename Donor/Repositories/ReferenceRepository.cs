@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Donor.Repositories
 {
-    public class LocalityRepository : ILocalityRepository
+    public class ReferenceRepository : IReferenceRepository
     {
         private readonly DonorContext _context;
 
-        public LocalityRepository(DonorContext context)
+        public ReferenceRepository(DonorContext context)
         {
             _context = context;
         }
@@ -19,5 +19,11 @@ namespace Donor.Repositories
         {
             return await _context.Localities.ToListAsync();
         }
+
+    public async Task<IEnumerable<Nationality>> GetAllNationalitiesAsync()
+        {
+            return await _context.Nationalities.ToListAsync();
+        }
+
     }
 }

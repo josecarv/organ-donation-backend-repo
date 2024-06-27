@@ -29,14 +29,14 @@ try
     }
 
     builder.Services.AddDbContext<DonorContext>(options =>
-        options.UseSqlite(connectionString)); 
+     options.UseSqlServer(connectionString));
     builder.Services.AddSwaggerGen();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
     // Add services to the container.
     builder.Services.AddScoped<IDonorRepository, DonorRepository>();
-    builder.Services.AddScoped<ILocalityRepository, LocalityRepository>();
+    builder.Services.AddScoped<IReferenceRepository, ReferenceRepository>();
 
 
     builder.Services.AddCors(options =>
@@ -44,7 +44,7 @@ try
         options.AddPolicy("AllowSpecificOrigin", builder =>
         {
             builder
-                .WithOrigins("http://localhost:4300")
+                .WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
