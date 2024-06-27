@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Donor.Entities;
 using Donor.Models;
 
 
@@ -10,10 +11,7 @@ namespace Donor.Repositories
         Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync();
 
 
-        Task<IEnumerable<Entities.Organ>> GetAllOrgansAsync();
-
-
-        Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds);
+        Task<IEnumerable<Entities.Organ>> GetAllOrgansAsync();        
 
 
         Task<Entities.Donor> GetDonorByIdAsync(int id);

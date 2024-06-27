@@ -1,4 +1,4 @@
-using Donor.Entities;
+using Donor.Enums;
 
 public class DonorStatusDto
 {

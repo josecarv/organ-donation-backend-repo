@@ -2,7 +2,6 @@
 using Donor.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Donor.Models;
-using Donor.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using Donor.Enums;
+using Donor.Entities;
 
 
 namespace Donor.Controllers
@@ -62,29 +63,8 @@ namespace Donor.Controllers
 
             var donor = _mapper.Map<Entities.Donor>(donorDto);
             await _repo.AddDonorAsync(donor);
-
-            return Ok("Donor registered successfully");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="donorId"></param>
-        /// <param name="organIds"></param>
-        /// <returns></returns>
-
-        [HttpPost("AddOrgans/{donorId}")]
-        public async Task<IActionResult> AddOrgans(int donorId, [FromBody] List<int> organIds)
-        {
-            var donor = await _repo.GetDonorByIdAsync(donorId);
-            if (donor == null)
-            {
-                return NotFound("Donor not found");
-            }
-
-            await _repo.AddOrgansToDonorAsync(donor, organIds);
-
-            return Ok("Organs added successfully");
+			await _repo.SaveChangesAsync();
+			return Ok("Donor registered successfully");
         }
 
 

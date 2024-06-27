@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Donor.Entities
+namespace Donor.Enums
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum BloodGroup

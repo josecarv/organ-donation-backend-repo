@@ -8,13 +8,9 @@ namespace Donor.Models
 {
     public class OrganDto
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         
-        public string name { get; set; } = string.Empty;
-
-
-
-
+        public string Name { get; set; } = string.Empty;
         
     }
 

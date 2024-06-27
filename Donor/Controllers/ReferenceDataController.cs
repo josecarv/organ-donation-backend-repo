@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Donor.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Donor.Entities;
+using Donor.Enums;
 
 namespace Donor.Controllers
 {

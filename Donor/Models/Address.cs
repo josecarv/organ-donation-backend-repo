@@ -1,4 +1,4 @@
-namespace Donor.Entities
+namespace Donor.Models
 {
     public class Address
     {

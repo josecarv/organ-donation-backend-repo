@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Donor.Entities;
+using Donor.Enums;
 
 namespace Donor.Models
 {
@@ -50,7 +51,7 @@ namespace Donor.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public List<int> Organs { get; set; } = new List<int>();
+        public List<OrganDto> Organs { get; set; } = new List<OrganDto>();
 
 
         

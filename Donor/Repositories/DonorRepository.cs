@@ -33,49 +33,26 @@ namespace Donor.Repositories
 
         public async Task AddDonorAsync(Entities.Donor donor)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            
             try
-
             {
-                donor.CreatedAt = DateTime.UtcNow;
-                donor.UpdatedAt = DateTime.UtcNow;
 
-
-                await _context.Donors.AddAsync(donor);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
+                await _context.Donors.AddAsync(donor); 
             }
 
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
                 _log.LogError(ex, "Database update error while adding donor");
-                await transaction.RollbackAsync();
+               
                 throw new ValidationException("A donor with the same Identity Number or Email already exists.");
             }
             catch (Exception ex)
             {
                 _log.LogError(ex, "Error adding donor");
-                await transaction.RollbackAsync();
+                
                 throw;
             }
-        }
-        public async Task AddOrgansToDonorAsync(Entities.Donor donor, List<int> organIds)
-        {
-            await _context.Entry(donor).Collection(d => d.Organs).LoadAsync();
-
-            var existingOrgans = await _context.Organs
-                .Where(o => organIds.Contains(o.Id))
-                .ToListAsync();
-
-            donor.Organs.Clear();
-            foreach (var organ in existingOrgans)
-            {
-                donor.Organs.Add(organ);
-            }
-
-            await _context.SaveChangesAsync();
-        }
+        }       
 
         public async Task<IEnumerable<Entities.Donor>> GetAllDonorsAsync()
         {

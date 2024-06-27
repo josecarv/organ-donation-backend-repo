@@ -1,12 +1,13 @@
 
 using System.Text.Json.Serialization;
 
-namespace Donor.Entities
+namespace Donor.Enums
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum PreferredContactMode
+    public enum Gender
     {
-        SMS = 0 ,
-        EMAIL = 1
+        Male,
+        Female,
+        Other
     }
 }
